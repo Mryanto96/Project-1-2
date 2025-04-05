@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LuxuryEstates | Premium Real Estate</title>
+    <style>
+      /* ===== BASE STYLES ===== */
+      :root {
+        --primary: #2a4365;
+        --primary-light: #4299e1;
+        --secondary: #c53030;
+        --light: #f7fafc;
+        --dark: #1a202c;
+        --gray: #e2e8f0;
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        --shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+        --shadow-hover: 0 14px 28px rgba(0, 0, 0, 0.12);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        line-height: 1.6;
+        color: var(--dark);
+        background: var(--light);
+      }
+
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      /* ===== TYPOGRAPHY ===== */
+      h1,
+      h2,
+      h3,
+      h4 {
+        line-height: 1.2;
+        font-weight: 700;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+      }
+      h2 {
+        font-size: clamp(1.75rem, 4vw, 2.5rem);
+      }
+      h3 {
+        font-size: clamp(1.5rem, 3vw, 2rem);
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        border-radius: 4px;
+        font-weight: 600;
+        transition: var(--transition);
+        text-align: center;
+      }
+
+      .btn-primary {
+        background: var(--secondary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .btn-outline {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+      }
+
+      .btn-outline:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      /* ===== HEADER ===== */
+      header {
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+        background: white;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+      }
+
+      .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .logo span {
+        color: var(--secondary);
+      }
+
+      nav.desktop-nav ul {
+        display: flex;
+        list-style: none;
+      }
+
+      nav.desktop-nav li {
+        margin-left: 2rem;
+        position: relative;
+      }
+
+      nav.desktop-nav a {
+        font-weight: 500;
+        padding: 0.5rem 0;
+        position: relative;
+      }
+
+      nav.desktop-nav a::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--secondary);
+        transition: var(--transition);
+      }
+
+      nav.desktop-nav a:hover::after {
+        width: 100%;
+      }
+
+      .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* ===== MOBILE MENU ===== */
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        max-width: 300px;
+        height: 100vh;
+        background: white;
+        z-index: 1100;
+        padding: 2rem;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+      }
+
+      .mobile-menu.active {
+        left: 0;
+      }
+
+      .mobile-menu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      .mobile-menu-nav ul {
+        list-style: none;
+      }
+
+      .mobile-menu-nav li {
+        margin-bottom: 1.5rem;
+      }
+
+      .mobile-menu-nav a {
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      .menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+      }
+
+      .menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      /* ===== HERO SECTION ===== */
+      .hero {
+        padding: 8rem 0 4rem;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+          url("https://tse1.mm.bing.net/th?id=OIP.Lh_cMgUSDFzFSWVjBybuGgHaD9&pid=Api&P=0&h=180") center/cover no-repeat;
+        color: white;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100px;
+        background: linear-gradient(to top, var(--light), transparent);
+        z-index: 1;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 600px;
+        animation: fadeInUp 1s ease;
+      }
+
+      .hero p {
+        margin: 1.5rem 0;
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      .hero-btns {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+
+      /* ===== PROPERTY SEARCH ===== */
+      .property-search {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+        animation: fadeIn 0.8s ease 0.3s both;
+      }
+
+      .search-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .form-group {
+        margin-bottom: 0;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        border: 1px solid var(--gray);
+        border-radius: 4px;
+        font-family: inherit;
+      }
+
+      /* ===== PROPERTY GRID ===== */
+      .section {
+        padding: 5rem 0;
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .section-title h2 {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 1rem;
+      }
+
+      .section-title h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--secondary);
+      }
+
+      .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .property-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+      }
+
+      .property-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .property-img {
+        height: 220px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .property-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+      }
+
+      .property-card:hover .property-img img {
+        transform: scale(1.05);
+      }
+
+      .property-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: var(--secondary);
+        color: white;
+        padding: 0.3rem 0.8rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .property-info {
+        padding: 1.5rem;
+      }
+
+      .property-price {
+        color: var(--secondary);
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .property-address {
+        color: #666;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .property-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+      }
+
+      .feature {
+        display: flex;
+        align-items: center;
+      }
+
+      .feature i {
+        margin-right: 0.3rem;
+        color: var(--primary-light);
+      }
+
+      /* ===== TESTIMONIALS ===== */
+      .testimonials {
+        background: var(--primary);
+        color: white;
+      }
+
+      .testimonial-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .testimonial-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2rem;
+        border-radius: 8px;
+        position: relative;
+      }
+
+      .testimonial-card::before {
+        content: '"';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        font-size: 4rem;
+        color: rgba(255, 255, 255, 0.1);
+        font-family: serif;
+        line-height: 1;
+      }
+
+      .testimonial-content {
+        position: relative;
+        z-index: 1;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+      }
+
+      .testimonial-author {
+        display: flex;
+        align-items: center;
+      }
+
+      .author-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 1rem;
+      }
+
+      .author-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .author-info h4 {
+        margin-bottom: 0.2rem;
+      }
+
+      .author-info p {
+        font-size: 0.8rem;
+        opacity: 0.8;
+      }
+
+      /* ===== AGENTS ===== */
+      .agent-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+
+      .agent-card {
+        text-align: center;
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+      }
+
+      .agent-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+      }
+
+      .agent-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto 1.5rem;
+        border: 3px solid var(--primary-light);
+      }
+
+      .agent-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .agent-social {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .agent-social a {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        background: var(--gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+      }
+
+      .agent-social a:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      /* ===== CONTACT ===== */
+      .contact-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 3rem;
+      }
+
+      .contact-info {
+        margin-bottom: 2rem;
+      }
+
+      .contact-info h3 {
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+      }
+
+      .contact-info h3::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background: var(--secondary);
+      }
+
+      .contact-details {
+        margin-top: 1.5rem;
+      }
+
+      .contact-item {
+        display: flex;
+        margin-bottom: 1rem;
+      }
+
+      .contact-item i {
+        margin-right: 1rem;
+        color: var(--primary-light);
+      }
+
+      .contact-form .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      textarea.form-control {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      /* ===== FOOTER ===== */
+      footer {
+        background: var(--dark);
+        color: white;
+        padding: 4rem 0 2rem;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+      }
+
+      .footer-col h3 {
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+      }
+
+      .footer-col h3::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 50px;
+        height: 2px;
+        background: var(--secondary);
+      }
+
+      .footer-links {
+        list-style: none;
+      }
+
+      .footer-links li {
+        margin-bottom: 0.8rem;
+      }
+
+      .footer-links a {
+        opacity: 0.8;
+        transition: var(--transition);
+      }
+
+      .footer-links a:hover {
+        opacity: 1;
+        color: var(--primary-light);
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* ===== ANIMATIONS ===== */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ===== RESPONSIVE STYLES ===== */
+      @media (max-width: 992px) {
+        .hero {
+          min-height: auto;
+          padding: 7rem 0 3rem;
+        }
+
+        .section {
+          padding: 4rem 0;
+        }
+      }
+
+      @media (max-width: 768px) {
+        nav.desktop-nav {
+          display: none;
+        }
+
+        .mobile-menu-btn {
+          display: block;
+        }
+
+        .hero-btns {
+          flex-direction: column;
+        }
+
+        .hero-btns .btn {
+          width: 100%;
+        }
+
+        .property-search {
+          margin-top: 0;
+        }
+
+        .search-form {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 576px) {
+        .section {
+          padding: 3rem 0;
+        }
+
+        .property-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===== HEADER ===== -->
+    <header>
+      <div class="container header-container">
+        <a href="index.html" class="logo">Luxury<span>Estates</span></a>
+
+        <nav class="desktop-nav">
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="properties.html">Properties</a></li>
+            <li><a href="agents.html">Agents</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+
+        <button class="mobile-menu-btn">☰</button>
+      </div>
+    </header>
+
+    <!-- ===== MOBILE MENU ===== -->
+    <div class="mobile-menu">
+      <div class="mobile-menu-header">
+        <a href="index.html" class="logo">Luxury<span>Estates</span></a>
+        <button class="mobile-menu-close">✕</button>
+      </div>
+
+      <nav class="mobile-menu-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="properties.html">Properties</a></li>
+          <li><a href="agents.html">Agents</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="menu-overlay"></div>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main>
+      <!-- Home Page (index.html) -->
+      <section class="hero">
+        <div class="container">
+          <div class="hero-content">
+            <h1>Find Your Dream Home Today</h1>
+            <p>
+              Discover premium properties in the most sought-after locations
+              worldwide. We combine local expertise with global standards.
+            </p>
+            <div class="hero-btns">
+              <a href="properties.html" class="btn btn-primary"
+                >Browse Properties</a
+              >
+              <a href="contact.html" class="btn btn-outline">Contact Us</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Property Search Form -->
+      <div class="container">
+        <div class="property-search">
+          <form class="search-form">
+            <div class="form-group">
+              <label for="location">Location</label>
+              <select id="location" class="form-control">
+                <option value="">Any Location</option>
+                <option value="new-york">New York</option>
+                <option value="los-angeles">Los Angeles</option>
+                <option value="miami">Miami</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="type">Property Type</label>
+              <select id="type" class="form-control">
+                <option value="">Any Type</option>
+                <option value="house">House</option>
+                <option value="apartment">Apartment</option>
+                <option value="villa">Villa</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="price">Price Range</label>
+              <select id="price" class="form-control">
+                <option value="">Any Price</option>
+                <option value="0-500000">$0 - $500,000</option>
+                <option value="500000-1000000">$500,000 - $1M</option>
+                <option value="1000000">$1M+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>&nbsp;</label>
+              <button type="submit" class="btn btn-primary" style="width: 100%">
+                Search
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Featured Properties -->
+      <section class="section">
+        <div class="container">
+          <div class="section-title">
+            <h2>Featured Properties</h2>
+            <p>Handpicked selection of premium properties</p>
+          </div>
+
+          <div class="property-grid">
+            <!-- Property 1 -->
+            <div class="property-card">
+              <div class="property-img">
+                <img src="https://tse4.mm.bing.net/th?id=OIP.PYY28va_X5Rw7JvRMZuJvQHaEk&pid=Api&P=0&h=180" alt="Modern Villa" />
+                <span class="property-badge">For Sale</span>
+              </div>
+              <div class="property-info">
+                <div class="property-price">$1,250,000</div>
+                <h3>Modern Villa in Beverly Hills</h3>
+                <p class="property-address">123 Sunset Blvd, Los Angeles, CA</p>
+                <div class="property-features">
+                  <span class="feature"><i>🛏️</i> 4 Beds</span>
+                  <span class="feature"><i>🚿</i> 3 Baths</span>
+                  <span class="feature"><i>📏</i> 3,200 sqft</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property 2 -->
+            <div class="property-card">
+              <div class="property-img">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.vXmLY5v6LPxpZ7oA3xndMwHaEK&pid=Api&P=0&h=180" alt="Luxury Penthouse" />
+                <span class="property-badge">For Sale</span>
+              </div>
+              <div class="property-info">
+                <div class="property-price">$3,750,000</div>
+                <h3>Luxury Penthouse in Manhattan</h3>
+                <p class="property-address">
+                  456 Central Park West, New York, NY
+                </p>
+                <div class="property-features">
+                  <span class="feature"><i>🛏️</i> 3 Beds</span>
+                  <span class="feature"><i>🚿</i> 3.5 Baths</span>
+                  <span class="feature"><i>📏</i> 2,800 sqft</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property 3 -->
+            <div class="property-card">
+              <div class="property-img">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.CqhNi3-bHx0qeP3i1fTB5wHaE8&pid=Api&P=0&h=180" alt="Waterfront Estate" />
+                <span class="property-badge">For Sale</span>
+              </div>
+              <div class="property-info">
+                <div class="property-price">$8,200,000</div>
+                <h3>Waterfront Estate in Miami</h3>
+                <p class="property-address">789 Ocean Drive, Miami, FL</p>
+                <div class="property-features">
+                  <span class="feature"><i>🛏️</i> 5 Beds</span>
+                  <span class="feature"><i>🚿</i> 6 Baths</span>
+                  <span class="feature"><i>📏</i> 6,500 sqft</span>
+                </div>
+              </div>
+            </div>
+            <!-- Property 1 -->
+            <div class="property-card">
+              <div class="property-img">
+                <img src="https://images.pexels.com/photos/3155666/pexels-photo-3155666.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Modern Villa" />
+                <span class="property-badge">For Sale</span>
+              </div>
+              <div class="property-info">
+                <div class="property-price">$1,250,000</div>
+                <h3>Modern Villa in Beverly Hills</h3>
+                <p class="property-address">123 Sunset Blvd, Los Angeles, CA</p>
+                <div class="property-features">
+                  <span class="feature"><i>🛏️</i> 4 Beds</span>
+                  <span class="feature"><i>🚿</i> 3 Baths</span>
+                  <span class="feature"><i>📏</i> 3,200 sqft</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property 2 -->
+            <div class="property-card">
+              <div class="property-img">
+                <img src="https://images.pexels.com/photos/261327/pexels-photo-261327.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Luxury Penthouse" />
+                <span class="property-badge">For Sale</span>
+              </div>
+              <div class="property-info">
+                <div class="property-price">$3,750,000</div>
+                <h3>Luxury Penthouse in Manhattan</h3>
+                <p class="property-address">
+                  456 Central Park West, New York, NY
+                </p>
+                <div class="property-features">
+                  <span class="feature"><i>🛏️</i> 3 Beds</span>
+                  <span class="feature"><i>🚿</i> 3.5 Baths</span>
+                  <span class="feature"><i>📏</i> 2,800 sqft</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Property 3 -->
+            <div class="property-card">
+              <div class="property-img">
+                <img src="https://images.pexels.com/photos/53610/large-home-residential-house-architecture-53610.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Waterfront Estate" />
+                <span class="property-badge">For Sale</span>
+              </div>
+              <div class="property-info">
+                <div class="property-price">$8,200,000</div>
+                <h3>Waterfront Estate in Miami</h3>
+                <p class="property-address">789 Ocean Drive, Miami, FL</p>
+                <div class="property-features">
+                  <span class="feature"><i>🛏️</i> 5 Beds</span>
+                  <span class="feature"><i>🚿</i> 6 Baths</span>
+                  <span class="feature"><i>📏</i> 6,500 sqft</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 3rem">
+            <a href="properties.html" class="btn btn-outline"
+              >View All Properties</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials -->
+      <section class="section testimonials">
+        <div class="container">
+          <div class="section-title">
+            <h2>What Our Clients Say</h2>
+            <p>Trusted by hundreds of happy clients</p>
+          </div>
+
+          <div class="testimonial-grid">
+            <!-- Testimonial 1 -->
+            <div class="testimonial-card">
+              <div class="testimonial-content">
+                <p>
+                  The team at LuxuryEstates helped me find my dream home in
+                  record time. Their attention to detail and market knowledge is
+                  unmatched.
+                </p>
+              </div>
+              <div class="testimonial-author">
+                <div class="author-img">
+                  <img src="client1.jpg" alt="Sarah Johnson" />
+                </div>
+                <div class="author-info">
+                  <h4>Sarah Johnson</h4>
+                  <p>Homeowner</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 2 -->
+            <div class="testimonial-card">
+              <div class="testimonial-content">
+                <p>
+                  As an investor, I appreciate their honest advice and extensive
+                  network. They've helped me build a profitable portfolio.
+                </p>
+              </div>
+              <div class="testimonial-author">
+                <div class="author-img">
+                  <img src="client2.jpg" alt="Michael Chen" />
+                </div>
+                <div class="author-info">
+                  <h4>Michael Chen</h4>
+                  <p>Real Estate Investor</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Testimonial 3 -->
+            <div class="testimonial-card">
+              <div class="testimonial-content">
+                <p>
+                  Professional, responsive, and truly cares about their clients.
+                  Sold my property above asking price in just 2 weeks!
+                </p>
+              </div>
+              <div class="testimonial-author">
+                <div class="author-img">
+                  <img src="client3.jpg" alt="David Rodriguez" />
+                </div>
+                <div class="author-info">
+                  <h4>David Rodriguez</h4>
+                  <p>Property Seller</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Agents Section -->
+      <section class="section">
+        <div class="container">
+          <div class="section-title">
+            <h2>Meet Our Agents</h2>
+            <p>Professional and dedicated real estate experts</p>
+          </div>
+
+          <div class="agent-grid">
+            <!-- Agent 1 -->
+            <div class="agent-card">
+              <div class="agent-img">
+                <img src="agent1.jpg" alt="Jennifer Lee" />
+              </div>
+              <h3>Jennifer Lee</h3>
+              <p>Senior Agent</p>
+              <p>Specializes in luxury properties and waterfront estates</p>
+              <div class="agent-social">
+                <a href="#"><i>📱</i></a>
+                <a href="#"><i>💼</i></a>
+                <a href="#"><i>📧</i></a>
+              </div>
+            </div>
+
+            <!-- Agent 2 -->
+            <div class="agent-card">
+              <div class="agent-img">
+                <img src="agent2.jpg" alt="Robert Taylor" />
+              </div>
+              <h3>Robert Taylor</h3>
+              <p>Commercial Specialist</p>
+              <p>Expert in investment properties and development</p>
+              <div class="agent-social">
+                <a href="#"><i>📱</i></a>
+                <a href="#"><i>💼</i></a>
+                <a href="#"><i>📧</i></a>
+              </div>
+            </div>
+
+            <!-- Agent 3 -->
+            <div class="agent-card">
+              <div class="agent-img">
+                <img src="agent3.jpg" alt="Maria Garcia" />
+              </div>
+              <h3>Maria Garcia</h3>
+              <p>Residential Agent</p>
+              <p>First-time homebuyer specialist</p>
+              <div class="agent-social">
+                <a href="#"><i>📱</i></a>
+                <a href="#"><i>💼</i></a>
+                <a href="#"><i>📧</i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h3>LuxuryEstates</h3>
+            <p>
+              Premium real estate services with a global network and local
+              expertise.
+            </p>
+          </div>
+
+          <div class="footer-col">
+            <h3>Quick Links</h3>
+            <ul class="footer-links">
+              <li><a href="index.html">Home</a></li>
+              <li><a href="properties.html">Properties</a></li>
+              <li><a href="agents.html">Agents</a></li>
+              <li><a href="about.html">About Us</a></li>
+              <li><a href="contact.html">Contact</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Services</h3>
+            <ul class="footer-links">
+              <li><a href="#">Buying</a></li>
+              <li><a href="#">Selling</a></li>
+              <li><a href="#">Renting</a></li>
+              <li><a href="#">Property Management</a></li>
+              <li><a href="#">Investment Consulting</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-col">
+            <h3>Contact Us</h3>
+            <address>
+              <p>123 Luxury Avenue<br />Beverly Hills, CA 90210</p>
+              <p>Phone: (310) 555-1234<br />Email: info@luxuryestates.com</p>
+            </address>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>&copy; 2023 LuxuryEstates. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+      // Mobile Menu Toggle
+      const mobileMenuBtn = document.querySelector(".mobile-menu-btn");
+      const mobileMenuClose = document.querySelector(".mobile-menu-close");
+      const mobileMenu = document.querySelector(".mobile-menu");
+      const menuOverlay = document.querySelector(".menu-overlay");
+
+      mobileMenuBtn.addEventListener("click", () => {
+        mobileMenu.classList.add("active");
+        menuOverlay.classList.add("active");
+        document.body.style.overflow = "hidden";
+      });
+
+      mobileMenuClose.addEventListener("click", () => {
+        mobileMenu.classList.remove("active");
+        menuOverlay.classList.remove("active");
+        document.body.style.overflow = "";
+      });
+
+      menuOverlay.addEventListener("click", () => {
+        mobileMenu.classList.remove("active");
+        menuOverlay.classList.remove("active");
+        document.body.style.overflow = "";
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          const targetId = this.getAttribute("href");
+          if (targetId === "#") return;
+
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: "smooth",
+            });
+
+            // Close mobile menu if open
+            mobileMenu.classList.remove("active");
+            menuOverlay.classList.remove("active");
+            document.body.style.overflow = "";
+          }
+        });
+      });
+
+      // Header scroll effect
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 100) {
+          document.querySelector("header").style.boxShadow =
+            "0 5px 20px rgba(0,0,0,0.1)";
+        } else {
+          document.querySelector("header").style.boxShadow =
+            "0 2px 10px rgba(0,0,0,0.1)";
+        }
+      });
+
+      // Lazy loading for images
+      document.addEventListener("DOMContentLoaded", function () {
+        const lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+
+        if ("IntersectionObserver" in window) {
+          let lazyImageObserver = new IntersectionObserver(function (
+            entries,
+            observer
+          ) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                let lazyImage = entry.target;
+                lazyImage.src = lazyImage.dataset.src;
+                lazyImage.classList.remove("lazy");
+                lazyImageObserver.unobserve(lazyImage);
+              }
+            });
+          });
+
+          lazyImages.forEach(function (lazyImage) {
+            lazyImageObserver.observe(lazyImage);
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
