@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+    <title>A ChatAI Program developed by Mr. Yanto</title>
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://i.pinimg.com/originals/8a/3b/cb/8a3bcb7e671068f7841726ee04928601.gif') center center fixed;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .chat-header {
+            background-color: #1f242d;
+            color: #ffffffe2;
+            padding: 15px;
+            border-bottom: #323946 2px solid;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .chat-header .running-text {
+            display: inline-block;
+            animation: marquee 8s linear infinite;
+            transform: translateX(100%);
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background: url('https://i.pinimg.com/originals/8a/3b/cb/8a3bcb7e671068f7841726ee04928601.gif') center center fixed;
+            /*https://engineering.giphy.com/wp-content/uploads/2017/06/api.gif*/
+            background-size: cover;
+            background-repeat: no-repeat;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message {
+            margin-bottom: 60px;
+        }
+
+        .user-message {
+            text-align: left;
+            display: flex;
+            flex-direction: row-reverse;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .bot-message {
+            text-align: left;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 5px;
+        }
+
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px;
+            border-radius: 15px 5px;
+            font-size: 13px;
+            opacity: 1;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 40px;
+            position: relative;
+            /* Menambahkan posisi relatif untuk mengatur pseudo-element */
+        }
+
+        .user-message .message-bubble {
+            background-color: #1f242d;
+            color: #ffffffe2;
+            margin-left: auto;
+            margin-right: 20px;
+            border-right: 6px solid rgb(23, 232, 89);
+        }
+
+        .bot-message .message-bubble {
+            background-color: #1b1d1f;
+            font-style: italic;
+            color: #ffffffe2;
+            border-left: 6px solid yellow;
+            /* Tambahkan border left untuk bot message */
+        }
+
+        /* Tanda centang biru untuk pesan sudah terbaca */
+        .message-bubble::after {
+            content: '\2714\2714';
+            /* Karakter Unicode untuk dua tanda centang biru */
+            color: #007bff;
+            /* Warna biru yang sama seperti di WhatsApp */
+            font-size: 8px;
+            position: absolute;
+            bottom: 5px;
+            right: 8px;
+        }
+
+
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            color: #ffffffe2;
+            background-color: #1f242d;
+            border-top: 1px solid #1f242d;
+            border-radius: 8px;
+            margin: 10px;
+        }
+
+        .input-box {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-family: "Poppins", sans-serif;
+            width: 90%;
+            color: #ffffffe2;
+            background-color: #1f242d;
+        }
+
+        .input-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .input-box::placeholder {
+            color: #ffffffe2;
+            font-size: 11px;
+        }
+
+
+        .send-button {
+            border: none;
+            border-radius: 15px 5px;
+            font-family: "Poppins", sans-serif;
+            background-color: #1f242d;
+            color: #fff;
+            width: 100px;
+            font-size: 14px;
+            border: 1px solid red;
+            font-weight: bold;
+            border-top: 2px solid rgb(255, 0, 132);
+            border-left: 2px solid rgb(242, 255, 0);
+            margin: 0 10px;
+            height: 40px;
+            padding: 2px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .send-button:hover {
+            background-color: #323946;
+            color: #ffffffe2;
+
+        }
+
+        #errorMessage {
+            text-align: center;
+            position: relative;
+            top: 50%;
+            font-size: 12px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin-bottom: 20px;
+        }
+
+        .send-button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 5px;
+        }
+
+        .user-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 5px;
+            border-radius: 3px;
+        }
+
+        .bot-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .bot-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .bot-video {
+            max-width: 100%;
+            height: 0;
+            padding-bottom: 30.25%;
+            width: 100%;
+        }
+
+        .select-container {
+            position: relative;
+        }
+
+        .select-container select {
+            padding: 15px;
+            border: none;
+            color: #ffffffe2;
+            font-size: 12px;
+            border-radius: 8px;
+            font-family: "Poppins", sans-serif;
+            width: 100%;
+        }
+
+        .rtl-text {
+            direction: rtl;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="chat-header">
+            <span class="running-text">Selamat Datang di SmartChat-AI SMP Persiapan Negeri Pulau Tiga </span>
+        </div>
+        <div class="chat-area" id="chatArea">
+        </div>
+    </div>
+    <div class="input-area">
+        <div>
+            <img class="user-icon"
+                src="https://cdn-icons-png.freepik.com/256/8111/8111935.png?ga=GA1.2.935816055.1717857094&semt=ais_hybrid"
+                alt="User Icon">
+            <!-- <img class="user-icon" src="https://drive.google.com/thumbnail?id=1JaSeFSQjkAZHDEaiUjfhCIdLx3jhnG8R"
+alt="User Icon"> -->
+            <input type="text" class="input-box" id="userNameInput"
+                placeholder="Ketikkan nama panggilan anda di sini 👈 ">
+        </div>
+        <div class="select-container">
+            <select class="input-box" id="questionSelect">
+                <option value="" disabled selected>
+                    ---Pilih pertanyaan anda di sini---
+                </option>
+            </select>
+        </div>
+        <div class="input-buttons">
+            <button class="send-button" id="sendButton">
+                <img src="https://cdn-icons-png.flaticon.com/128/3814/3814305.png" alt="Send Icon">
+                Kirim
+            </button>
+            <button class="send-button" id="clearButton">
+                <img src="https://cdn-icons-png.flaticon.com/128/8001/8001499.png" alt="Clear Icon">
+                Hapus
+            </button>
+        </div>
+        <br><br>
+        <div id="errorMessage" style="color: hsl(175, 100%, 50%); font-style: italic;"></div>
+    </div>
+    </div>
+    <script>
+        const chatData = [
+            {
+                question:
+                    "Ibu guru, sa ada mo tanya, bagaimana saya bisa mencapai impian saya untuk menjadi seorang dokter k?",
+                answer:
+                    "🌟 Wahh, pertanyaanmu keren banget! Untuk mencapai impianmu menjadi seorang dokter, langkah pertama yang sangat penting adalah membangun fondasi pendidikan yang kuat di sekolah ini. Pendidikan di sekolah akan memberi Anda dasar pengetahuan yang esensial dalam ilmu pengetahuan dan matematika, yang merupakan landasan bagi pendidikan medis. Di samping itu, penting untuk aktif dalam kegiatan ekstrakurikuler yang relevan, seperti kelompok studi sains atau klub kesehatan, yang dapat memperluas pemahaman Anda di luar ruang kelas. Selain itu, pertimbangkan untuk mengambil kursus tambahan yang berkaitan dengan ilmu kedokteran atau magang di rumah sakit atau klinik lokal. Ini tidak hanya akan memberi Anda pengalaman praktis yang berharga tetapi juga memperluas jaringan profesional Anda di bidang kesehatan. Menghadiri seminar dan konferensi medis serta membaca literatur terkini tentang perkembangan medis juga akan membantu Anda tetap terinformasi dan termotivasi dalam mencapai impian Anda. Selanjutnya, penting untuk menjaga keseimbangan antara akademis dan kesehatan mental Anda. Tetapkan jadwal belajar yang seimbang dengan waktu istirahat dan kegiatan yang menyenangkan untuk menjaga semangat dan kesehatan Anda secara keseluruhan. Dengan dedikasi, kerja keras, dan dukungan dari guru dan teman-teman, saya yakin Anda dapat mencapai impian menjadi seorang dokter yang berdedikasi dan memberikan kontribusi besar bagi masyarakat.",
+                imageUrl:
+                    "https://th.bing.com/th/id/OIG2.km0QMUDZjzpk_Cb0DiKH?pid=ImgGn, https://img.freepik.com/free-photo/world-doctors-day-smiling-doctor-holding-glasses-with-stethoscope-medical-coat_140725-162391.jpg?t=st=1719207136~exp=1719210736~hmac=a0705a4bd028048d5aadb3701889574a85dfbba56d3ad6fd266283359df28097&w=900, https://th.bing.com/th/id/OIG2.FfwQBI_EQfRYqwgvSwGC?w=1024&h=1024&rs=1&pid=ImgDetMain",
+                link: "",
+                videoLink: "",
+                // videoLink: "https://www.youtube.com/watch?v=qcjfRCKdZB4",
+            },
+            {
+                question:
+                    "Pa guru, sa boleh tanya sesuatu k? Bagaimana sa bisa meningkatkan kemampuan berpikir kritis saya?",
+                answer:
+                    "Ahh...bisa toh!😁, Pele, ko pu pertanyaan sangat jenius sekali! oke, jadi kemampuan berpikir kritis adalah keterampilan yang sangat berharga dalam kehidupan akademis dan profesional Anda. Untuk meningkatkan kemampuan ini, ada beberapa langkah yang dapat Anda ambil. Mau tahu depu cara? SIP 👍, pertama-tama, latih diri Anda untuk selalu bertanya 'mengapa' dan 'bagaimana' terhadap setiap informasi yang Anda terima. Jangan terima begitu saja apa yang Anda baca atau dengar, tetapi pertimbangkan sumber informasi, relevansi, dan implikasinya. Berlatih untuk menganalisis informasi dari berbagai sudut pandang akan membantu Anda mengembangkan kemampuan berpikir kritis yang kuat. Selanjutnya, berpartisipasi aktif dalam diskusi kelas dan kelompok studi. Diskusikan ide dan konsep dengan teman sekelas atau rekan studi untuk mendapatkan perspektif yang berbeda. Mendengarkan pendapat orang lain dan berdebat secara terstruktur akan melatih Anda untuk mempertimbangkan argumen dari berbagai sudut pandang. Ambil kebiasaan untuk membaca literatur akademis dan buku-buku yang menantang pemikiran Anda. Buku-buku ini akan membuka wawasan Anda terhadap ide-ide baru dan pendekatan yang inovatif dalam bidang studi Anda. Diskusikan ide-ide ini dengan mentor atau dosen Anda untuk mendapatkan umpan balik dan pandangan yang berharga. Terakhir, jangan takut untuk mengambil risiko intelektual. Berani mengemukakan pendapat atau menantang status quo akan membantu Anda mengasah kemampuan berpikir kritis Anda. Terbuka terhadap pembelajaran dan berani dalam mencoba hal-hal baru adalah kunci untuk pengembangan pribadi yang berkelanjutan. Dengan komitmen untuk terus belajar dan mengembangkan diri, saya yakin Anda dapat meningkatkan kemampuan berpikir kritis Anda secara signifikan. Teruslah bertanya, berdiskusi, dan eksplorasi untuk mencapai potensi intelektual Anda yang penuh.",
+                imageUrl:
+                    "https://th.bing.com/th/id/OIG1.9AJ9GTyBu.gRwxxtL7N2?pid=ImgGn, https://tse4.mm.bing.net/th?id=OIP.Mxh4L3atzrT1JnZ7NdM3zgHaFP&pid=Api&P=0&h=180",
+                link: "",
+                videoLink: "",
+                // videoLink: "https://www.youtube.com/watch?v=qcjfRCKdZB4",
+            },
+            {
+                question:
+                    "Bpk/Ibu guru, mo tanya, bagaimana pendidikan di sekolah ini dapat membantu saya mencapai cita-cita karier saya di masa depan?",
+                answer:
+                    " 🌟 Wah...pertanyaanmu sangat inspiratif! Pendidikan di sekolah ini menyediakan fondasi yang kokoh untuk meraih cita-cita karier Anda. Mata pelajaran seperti matematika dan ilmu pengetahuan membantu Anda membangun keterampilan analitis yang diperlukan dalam berbagai karier. Selain itu, sekolah ini menawarkan berbagai kegiatan ekstrakurikuler dan klub yang dapat mengembangkan minat dan bakat khusus Anda. Ambil inisiatif untuk terlibat dalam klub sains, klub sastra, atau tim olahraga untuk mengasah keterampilan sosial, kepemimpinan, dan kolaborasi Anda. Aktivitas-aktivitas ini tidak hanya memperluas lingkaran sosial Anda tetapi juga memberi Anda pengalaman yang berharga di luar ruang kelas. Jangan ragu untuk memanfaatkan sumber daya di sekolah, seperti perpustakaan yang lengkap, laboratorium yang modern, dan fasilitas olahraga yang baik. Ini semua dirancang untuk mendukung pertumbuhan dan pengembangan Anda sebagai seorang individu. Selain itu, pertimbangkan untuk menghadiri seminar, lokakarya, atau konferensi yang diselenggarakan di sekolah atau di luar sekolah. Acara-acara ini akan memberi Anda wawasan tentang tren terbaru dalam bidang karier yang Anda minati dan kesempatan untuk berinteraksi dengan para profesional yang sudah berpengalaman. Terakhir, jadilah proaktif dalam mencari bimbingan dan nasihat dari guru dan konselor sekolah. Mereka dapat membantu Anda merencanakan langkah-langkah konkret untuk mencapai cita-cita karier Anda. Dengan memanfaatkan semua sumber daya yang tersedia dan mengambil inisiatif dalam pendidikan Anda, saya yakin Anda akan siap untuk meraih kesuksesan dalam karier yang Anda impikan.",
+                imageUrl:
+                    "https://img.freepik.com/free-vector/starting-career-concept-illustration_114360-20563.jpg?t=st=1719209300~exp=1719212900~hmac=63c9d182a3e80148986b5ee084542c257c99333c72ba0ae99782c42b30b0c6b8&w=740, https://img.freepik.com/free-vector/steps-concept-illustration_114360-8350.jpg?t=st=1719209398~exp=1719212998~hmac=673696f28f5430c5087e8a0dafc301185ce87205c1325c96ed2a3bbea45875a1&w=740",
+                link: "",
+                videoLink: "",
+                // videoLink: "https://www.youtube.com/watch?v=qcjfRCKdZB4",
+            },
+            {
+                question:
+                    "Bu, strategi belajar apa yang paling efektif untuk mempersiapkan ujian, misalnya ulangan harian, UTS maupun UAS?",
+                answer:
+                    "🌟 Wah, pertanyaanmu luar biasa! Strategi belajar yang efektif merupakan kunci untuk meraih hasil maksimal dalam ujian. Salah satu strategi yang dapat Anda terapkan adalah merancang jadwal belajar yang teratur dan konsisten. Pisahkan waktu untuk mempersiapkan setiap mata pelajaran dan buatlah daftar topik yang perlu dipelajari. Dengan demikian, Anda dapat memprioritaskan waktu belajar Anda berdasarkan tingkat kesulitan dan jumlah materi yang harus dipelajari. Selain itu, gunakan teknik revisi berkala untuk memperkuat pemahaman Anda. Review kembali materi yang telah Anda pelajari secara berkala akan membantu Anda mempertahankan informasi dalam jangka panjang. Uji diri secara teratur dengan mengerjakan soal-soal latihan atau membuat ringkasan materi yang telah dipelajari juga akan memperkuat pemahaman Anda. Jangan ragu untuk berdiskusi dengan teman sekelas atau mengajukan pertanyaan kepada guru jika Anda menghadapi kesulitan dalam memahami materi tertentu. Diskusi kelompok atau studi kelompok dapat memberi Anda sudut pandang baru dan memperluas pemahaman Anda tentang suatu topik. Selain belajar secara individual, luangkan waktu untuk beristirahat dan melakukan aktivitas yang menyenangkan. Tubuh yang segar dan pikiran yang jernih adalah kunci untuk belajar dengan efektif. Jaga keseimbangan antara waktu belajar yang intensif dan waktu untuk melepaskan stres. Terakhir, tetaplah tenang dan percaya diri saat menghadapi ujian. Persiapkan diri dengan baik dan ingatkan diri Anda bahwa Anda telah bekerja keras untuk mencapai kesuksesan ini. Dengan pendekatan yang sistematis dan konsisten, saya yakin Anda dapat meraih hasil yang optimal dalam ujian Anda.",
+                imageUrl:
+                    "https://img.freepik.com/free-photo/close-up-still-life-hard-exams_23-2149314030.jpg?t=st=1719209684~exp=1719213284~hmac=cbc7887c4805ab3016eeeb051d7e6645f7845a0b72169e32f8ed163500bcd5a2&w=900, https://img.freepik.com/free-photo/young-team-coworkers-working-project_273609-16171.jpg?t=st=1719209741~exp=1719213341~hmac=3a50c8da7c579192b36052a205989fea61698df4422693ae97d955c86449e971&w=900",
+                link: "",
+                videoLink: "",
+                // videoLink: "https://www.youtube.com/watch?v=qcjfRCKdZB4",
+            },
+            {
+                question:
+                    "Pak, apa yang harus saya lakukan untuk tetap termotivasi dalam belajar?",
+                answer:
+                    "🌟 Wah, pertanyaanmu sangat bagus! Menjaga motivasi dalam belajar adalah kunci untuk mencapai kesuksesan akademis dan mencapai impian pribadi Anda. Pertama-tama, penting untuk memiliki tujuan yang jelas dan spesifik. Misalnya, tetapkan tujuan jangka pendek (misalnya, mencapai nilai tertentu dalam ujian) dan tujuan jangka panjang (misalnya, memasuki universitas impian Anda). Tujuan ini akan memberi Anda arah dan fokus dalam upaya belajar Anda. Selanjutnya, carilah dukungan dari lingkungan sekitar, termasuk teman-teman, keluarga, dan guru. Diskusikan impian dan tujuan Anda dengan mereka, karena dukungan sosial dapat memberi Anda dorongan tambahan untuk tetap termotivasi. Selain itu, jadwalkan waktu untuk istirahat dan rekreasi. Memiliki keseimbangan antara belajar yang serius dan waktu untuk menikmati hobi atau aktivitas favorit Anda akan membantu menjaga semangat dan energi Anda. Untuk menjaga motivasi dalam jangka panjang, penting untuk memperkuat pemahaman Anda tentang pentingnya pendidikan dalam mencapai impian hidup Anda. Ingatkan diri Anda bahwa setiap usaha belajar adalah investasi dalam masa depan Anda sendiri. Gunakan hasil belajar Anda sebagai dorongan untuk mencapai lebih banyak tujuan dan memperluas wawasan Anda. Terakhir, tetaplah fleksibel dan terbuka terhadap perubahan. Belajar adalah proses yang dinamis, dan Anda mungkin menemui tantangan di sepanjang jalan. Tetapkan sikap positif dan hadapi tantangan dengan keberanian dan ketekunan. Dengan pendekatan yang terstruktur dan dukungan yang tepat, saya yakin Anda dapat tetap termotivasi dalam mengejar cita-cita dan impian Anda.",
+                imageUrl:
+                    "https://img.freepik.com/free-photo/top-view-open-blue-copybook-with-crackers-cup-tea-green-apple-brown-desk_140725-66104.jpg?t=st=1719210123~exp=1719213723~hmac=308bb83a156faaf2aa4e3a62e891bf9d727f56d6e19f9c49cac0ffe41f8e6716&w=900, https://img.freepik.com/free-photo/pensive-asian-guy-resting-floor-with-books_1262-1027.jpg?t=st=1719210195~exp=1719213795~hmac=dd225230434de147e382953673c5ecfa38f55779352a26bc57f163752340102d&w=900",
+                link: "",
+                videoLink: "",
+                // videoLink: "https://www.youtube.com/watch?v=qcjfRCKdZB4",
+            },
+            {
+                question: "Siapakah yang menciptakan Anda, SmartChat-AI?",
+                answer:
+                    "Hi, terima kasih atas penasaran anda! Saya, SmartChat-AI, merupakan sebuah program komputer yang diciptakan oleh Mr. Yanto. Beliau adalah seorang guru bahasa Inggris di SMP Persiapan Negeri Pulau Tiga. Mr. Yanto merancang dan memprogramkan saya untuk memberikan respon/jawaban otomatis kepada pertanyaan dan permintaan pengguna termasuk anda yang ada di SMP Persiapan Negeri ini.Teknologi yang digunakan oleh Mr. Yanto dalam merancang dan memprogramkan saya adalah JavaScript, Cascading Style Sheet (CSS), dan Hyper Text Markup Language (HTML). Saya terus dikembangkan untuk menjadi lebih pintar dan responsif dalam interaksi dengan anda sobat belajar. Tapi ingat, kapasitas dan kemampuan saya tergantung Mr. Yanto karena jumlah dataset yang digunakan untuk melatih saya mungkin terbatas, untuk itu mohon maaf jika respon yang saya berikan kurang berkenan dihati anda tapi saya akan terus berusaha agar semakin lebih baik dalam berinteraksi dengan anda! Oh iya, jika Anda memiliki pertanyaan atau permintaan lain, jangan ragu untuk mengajukannya! Anda bisa melihat gambar orang yang menciptakan saya di bawah ini. Anda juga dapat menghubunginya di no WhatsApp 👉 +62822-5473-0476",
+                imageUrl: "https://drive.google.com/thumbnail?id=1JaSeFSQjkAZHDEaiUjfhCIdLx3jhnG8R",
+                link: "https://sites.google.com/view/smp-pn-pulau-tiga/dashboard-guru?authuser=1",
+                videoLink: "https://www.youtube.com/embed/1KG1EF50VtE",
+            },
+            {
+                question:
+                    "Saya penasaran, apa sebenarnya yang dimaksud dengan TENSES dalam bahasa Inggris? Mengapa kita harus memahami pelajaran ini dan apa pengaruhnya dalam berbicara dan menulis?",
+                answer:
+                    "🌟 Hi, selamat datang di petualangan bahasa Inggris yang asyik! 🌟 Tenses seperti tolok ukur waktu yang membantu kita menceritakan berbagai kejadian dalam bahasa Inggris. Misalnya, present simple membantu kita menjelaskan kegiatan rutin sehari-hari seperti bangun tidur atau makan. Past simple membawa kita kembali ke momen-momen seru di masa lalu, seperti liburan atau ulang tahun yang bikin senyum-senyum sendiri. Sementara future simple memungkinkan kita merencanakan hal-hal keren yang akan kita lakukan, seperti impian atau rencana besok. 🚀Tapi, kenapa kita harus belajar tenses? 🤔 Bayangkan jika kita nggak paham tenses, cerita kita bakal jadi seperti puzzle tanpa gambar. Dengan belajar tenses, kita bisa menjelaskan kapan, bagaimana, dan mengapa sesuatu terjadi dengan lebih jelas. Ini bikin kita bisa lebih percaya diri saat ngobrol atau nulis dalam bahasa Inggris. Selain itu, tenses adalah dasar yang perlu kita kuasai untuk melangkah ke level bahasa Inggris yang lebih tinggi. Jadi, mari kita tekuni belajar tenses dengan semangat, karena ini adalah pondasi penting buat kita jadi master bahasa Inggris! 🚀✨Kalau ada yang mau ditanyakan atau dibahas lebih lanjut, boleh langsung disampaikan. Oh iya, anda bisa lihat contoh nya di bawah ini👇 Keep the English spirit alive! 🌈🇬🇧",
+                imageUrl:
+                    "https://shafta.sch.id/wp-content/uploads/2023/01/Tenses.png ,https://en.learniv.com/info/en/wp-content/uploads/2021/10/present_tenses.png",
+                link: "",
+                videoLink: "",
+                // videoLink: "https://www.youtube.com/watch?v=qcjfRCKdZB4",
+            },
+
+            // jawaban penting untuk sekolah
+            {
+                question:
+                    "Mengapa kita menggunakan simple present tense untuk menjelaskan kebiasaan atau aktivitas rutin?",
+                answer:
+                    "🗣️Mari kita memulai petualangan bahasa Inggris dengan merinci misteri di balik penggunaan present simple tense! Adakah yang bertanya-tanya mengapa kita sering menggunakan tense ini ketika menjelaskan kebiasaan atau aktivitas rutin? Inilah yang akan kita ungkap bersama. 📖Definisi Present Simple: Present simple tense adalah bentuk waktu yang digunakan untuk menyatakan kejadian, fakta, atau kebiasaan yang terjadi secara rutin, berulang, atau umum. Hal ini memberikan gambaran tentang apa yang biasanya terjadi, tidak hanya pada saat tertentu. 🎯Penggunaan Present Simple: 1. Kebiasaan Rutin: She walks to school every day. 2. Fakta Umum: The Earth revolves around the sun. 🕰️Kata Kerja yang Dipakai: Untuk orang ketiga tunggal (he, she, it), kita menambahkan (s) atau (es) pada kata kerja. 🔍Rumus Present Simple: 1. Bentuk Positif: Subject + Verb (kata kerja dasar) + Object. Contoh: She studies chemistry regularly. 2. Bentuk Negatif: Subject + Do/Does + Not + Verb + Object Contoh: He does not like coffee. 3. Bentuk Interrogatif: Do/Does + Subject + Verb + Object. 📝Contoh: Do you read books regularly? Contoh Soal Berdasarkan Rumus: 1. Buat kalimat positif dengan kata kerja STUDY untuk orang ketiga tunggal. Jawaban: She studies chemistry regularly. 2. Ubah kalimat: He does not speak Spanish ke dalam bentuk positif. Jawaban: He speaks Spanish. 3. Buat kalimat tanya dengan kata kerja READ untuk subjek YOU. Jawaban: Do you read books regularly? 🚀TIPS Cepat Menguasai Present Simple: Untuk cepat menguasai present simple, praktikkan dengan membuat kalimat sehari-hari dan perbanyak latihan untuk meningkatkan pemahaman. Ingatlah, semakin sering kita latihan, semakin mudah kita menguasainya! Semoga penjelasan ini membantu Anda memahami lebih dalam tentang present simple tense. Jika ada pertanyaan lebih lanjut atau kebutuhan latihan lebih, silakan disampaikan!",
+                imageUrl:
+                    "https://en.learniv.com/info/en/wp-content/uploads/2021/10/present_simple.png",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question:
+                    "Bagaimana penggunaan elliptical sentence dapat meningkatkan keefektifan komunikasi dalam bahasa Inggris? Apakah ada contoh konkret di mana penggunaan elliptical sentence memberikan dampak yang signifikan dalam menyampaikan informasi? 🤔",
+                answer:
+                    "Elliptical sentence/kalimat elipsis adalah struktur kalimat di mana beberapa unsur kata atau frasa dihilangkan karena informasinya sudah tersirat atau sudah disampaikan sebelumnya. Penggunaan elliptical sentence membantu menghindari pengulangan kata-kata yang tidak perlu dan memberikan kesan ringkas pada kalimat. Dengan kata lain bahwa Elliptical sentence mampu membawa efisiensi dan dinamika dalam komunikasi. Sebagai contoh, dalam kalimat => She can speak Japan; he, Mandarin. kata kerja SPEAK dihilangkan pada kalimat kedua karena sudah tersirat dari kalimat pertama. Penggunaan elliptical sentences tidak hanya membantu menghindari pengulangan kata-kata yang tidak perlu, tetapi juga memberikan kesan ringkas pada kalimat. Hemat betul yah si Elliptical ini heheh…Ketika elliptical sentence dipadukan dengan kata-kata seperti TOO, SO, EITHER atau NEITHER, dinamika dalam penyampaian informasi semakin terasa. Sebagai ilustrasi, perhatikan kalimat => She enjoys playing tennis, and he does too. Dalam konteks ini, penggunaan elliptical sentence dengan kata TOO memungkinkan eliminasi/menghilangkan kata kerja (enjoys playing), yang sudah tersirat dari konteks sebelumnya. Akibatnya, kalimat tidak hanya menjadi lebih singkat, tetapi juga terhindar dari pengulangan kata-kata yang dapat membuatnya terdengar monoton dan kelepotan kayak Papeda saja 🤣. Namun, perlu dicatat✍️ bahwa penggunaan elliptical sentence tidak bisa lepas dari pemahaman konteks yang kuat antara pembicara dan pendengar. Dengan memasukkan kata-kata tambahan seperti TOO, kita mampu menyampaikan kesamaan atau persetujuan dalam kalimat tanpa perlu mengulang informasi yang sudah diketahui sebelumnya. Dengan demikian, penggunaan elliptical sentence dengan kata-kata semacam itu tidak hanya meningkatkan efisiensi dalam komunikasi, tetapi juga memberikan dinamika yang menyegarkan pada struktur kalimat secara keseluruhan. Hemm….masih bingung? 🧐",
+                imageUrl:
+                    "https://josecarilloforum.com/imgs/elliptical-sentence&clause_composite-1A6.png",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question:
+                    "Apakah ada Teknik untuk memahami konsep-konsep yang rumit dengan lebih baik dan mendalam?",
+                answer: "Apakah pernah terlintas dalam pikiran Anda bahwa pelajaran di sekolah kadang terasa seperti labirin yang tak berujung? Jangan khawatir, karena di balik kerumitan itu ada kunci pintar yang bisa membantu Anda membuka pintu rahasia pemahaman - Teknik Feynman🗝️. Eittss...sebelum kita lanjut, izinkan saya untuk bertanya, kenapa namanya teknik Feynman? Saya tebak itu pertanyaan yang ada dibenak anda tadi, ya kan? Oke, karena anda penasaran, let's dive into it. Pada hari-hari gemuruh pelajaran di SMP yang terkadang menurut anda membingungkan, sering kali muncul pertanyaan dalam benak anda, 'Bagaimana caranya menghadapi konsep-konsep kompleks dengan lebih mudah?' Nah, jawaban dari pertanyaan ini terletak pada Teknik Feynman. Ya, anda tidak salah dengar🧏. Teknik ini adalah seperti alat ajaib yang akan membantu Anda mengurai kerumitan materi pelajaran menjadi potongan-potongan pemahaman yang lebih kecil dan jelas. Teknik ini diciptakan oleh seorang fisikawan hebat namanya Richard Feynman, seoarang ahli dalam fisika teoritis. Orang nya suka hal-hal aneh, suka ngerjain temanya sendiri pula. Tapi hal itu dia lakukan semata-mata untuk melatih kreativitas otak nya✨ Mari kita ikuti perjalanan dengan Teknik Feynman untuk melihat bagaimana hal ini bekerja dalam dunia pembelajaran. Langkah pertama yang penting adalah PEMAHAMAN. Ketika Anda berhadapan dengan materi yang terlihat seperti teka-teki kode rahasia, jangan biarkan kebingungan merayap dalam pikiran Anda. Bacalah materi tersebut dengan penuh perhatian dan tanyakan pada diri sendiri, 'Apakah saya benar-benar memahami ini?' Ketika keraguan muncul, itu artinya Anda siap untuk langkah berikutnya. 🤔 Langkah selanjutnya adalah PENYEDERHANAAN. Bahkan konsep yang paling rumit pun bisa dipecah menjadi bahasa yang lebih mudah dimengerti. Bayangkan Anda menjelaskan konsep peluang dalam matematika kepada adik kecil Anda. Bagaimana Anda akan menyampaikan konsep tersebut? Pemahaman Anda yang sederhana akan menjadi kunci untuk mengurai kompleksitas. Kini, kita melangkah ke langkah PENINJAUAN ULANG/REVIEW. Tantang diri Anda untuk mengajukan pertanyaan tentang konsep tersebut dan berusaha menjawabnya dengan jelas. Misalnya, saat Anda mempelajari teori evolusi, coba pikirkan, 'Bagaimana saya akan menjelaskan ini pada seseorang yang belum pernah mendengar tentang biologi?' Dengan menjawab pertanyaan ini, Anda mulai merasakan cahaya yang memancar di ujung lorong konsep. 🕵️‍♂️ Sekarang, kita sampai pada langkah PENJELASAN. Setelah Anda memecah konsep menjadi bagian-bagian yang lebih mudah dicerna, tantang diri Anda untuk mengajarkan konsep tersebut pada teman sekelas Anda. Jika Anda mampu menyampaikannya dengan bahasa yang mudah dimengerti, itu adalah tanda bahwa Anda sedang berada di jalan menuju pemahaman yang mendalam. 🗣️ Ingatlah, Teknik Feynman adalah alat bantu, bukan sihir instan. Diperlukan latihan dan dedikasi untuk menguasainya. Namun, ketika Anda melihat hasilnya, Anda akan merasa nilai usaha Anda sebanding. Anda akan merasa lebih percaya diri dalam menghadapi materi pelajaran yang kompleks, dan berbagai konsep yang awalnya terlihat seperti teka-teki rumit akan menjadi lebih terang. 🌟 Jadi, ketika Anda merasa terjebak dalam kerumitan materi pelajaran, ingatlah tentang Teknik Feynman. Ini adalah kunci yang akan membantu Anda memahami bahkan konsep yang paling sulit sekalipun. Seperti merangkai teka-teki yang akhirnya membentuk gambaran yang jelas, dengan latihan dan tekad, Anda akan mampu mengatasi konsep-konsep sulit dengan lebih mudah dan percaya diri. 💪 Tidak lupa, di setiap perjalanan pembelajaran Anda, akan ada cerita inspiratif yang membuktikan bahwa dengan kerja keras dan Teknik Feynman, sulit bukanlah kata yang menakutkan, tetapi tantangan yang bisa Anda taklukkan. 🌠 INGAT: Jika kamu tidak bisa menjelaskan sesuatu kepada anak umur 6 tahun, itu artinya kamu juga tidak paham apa yang sedang kamu omongkan itu! Itu pesan dari tokoh favorit saya namanya Albert Einstein.",
+                imageUrl:
+                    "https://i.pinimg.com/originals/9f/a5/7c/9fa57cf16aa1c645f26e2c0bb416a6b9.png",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Bagaimana penerapan FIRST PRINCIPLE THINKING dapat meningkatkan kemampuan belajar siswa serta mendorong perkembangan kemampuan berpikir kritis?",
+                answer:
+                    "Pernahkah kamu merasa belajar itu ibarat menyusun potongan teka-teki yang membingungkan? Hal ini seperti kita mencoba memecahkan teka-teki yang kompleks. Tetapi tahukah kamu, terdapat sebuah kunci rahasia yang bisa menjadikanmu ahli dalam belajar? Mau tahu kunci rahasianya? Baiklah! Kuncinya adalah 'First Principle Thinking'/ prinsip dasar yang merupakan alat kerangka berpikir magis yang membantu kita merangkai teka-teki pembelajaran dengan cara yang tak hanya menarik, tetapi juga mendalam. Sedalam ulu hati. Bayangkan proses belajar seperti membangun struktur kompleks dengan blok-blok bangunan. Terkadang kita cenderung hanya menghafal informasi yang disampaikan tanpa benar-benar memahami dasar-dasar yang kuat di baliknya. Hal ini serupa dengan membangun bangunan tanpa memperhatikan fondasi yang kokoh. Namun, First Principle Thinking mengubah cara kita belajar. Ini mirip dengan menggali ke dalam tanah untuk membangun pondasi yang kuat. Dengan memahami konsep dasar, kita memiliki pondasi yang solid untuk membangun pengetahuan yang lebih kompleks dan berkelanjutan. Albert Einstein pernah mengatakan, 'Berbicara tentang prinsip adalah seperti berbicara tentang batu bata pertama dalam sebuah bangunan. Tanpa batu bata ini, tidak akan ada bangunan. Frasa ini mencerminkan hakikat dari First Principle Thinking, sebuah metode yang memungkinkan kita memahami dasar-dasar yang membentuk inti dari setiap pengetahuan. Seperti halnya memahami batu bata pertama, kita dapat merangkai pengetahuan yang kokoh. Contohnya gini, bayangkan kita ingin memahami mengapa planet-planet bergerak di langit. Kenapa tidak di dalam tanah saja, iya kan? Alih-alih menerima jawaban konvensional atau yang biasa aja, First Principle Thinking mendorong kita untuk memulai dari dasar, mencari tahu sampai akarnya sekalipun. Kita belajar tentang hukum gravitasi Newton dan konsep dasar gaya. Dari sini, kita membangun pemahaman tentang bagaimana objek-objek saling berinteraksi. Dengan menerapkan prinsip ini, kita bisa memahami konsep tersebut lebih dalam daripada sekadar mengingat fakta. Tak hanya itu lho, prinsip ini dapat diterapkan seperti kisah seorang pak Tani sebut saja pak Markus yang ingin memahami pertumbuhan tanaman. Dia tak hanya mencatat perbedaan di lingkungan, tetapi juga menggali faktor-faktor prinsipil yang mempengaruhi pertumbuhan. Dia memahami unsur-unsur seperti jenis tanah, kadar air, sinar matahari, dan lainnya. Hasilnya, ia mampu mengembangkan kebun yang subur dan mengagumkan di lokasi tersebut. Jadi, First Principle Thinking adalah kunci yang membuka gerbang pemahaman yang mendalam, membebaskan kreativitas tak terbatas, dan mengasah kemampuan berpikir kritis. Dengan mengadopsi pendekatan ini, kita tidak hanya memahami informasi secara menyeluruh, tetapi juga membangun pondasi yang kuat untuk menghadapi tantangan di masa depan. Ini adalah framework/kerangka berpikir sederhana yang merubah proses belajar menjadi petualangan intelektual yang menarik dan memberikan manfaat jangka panjang. Jika seorang anak kecil bertanya sama kamu 'kenapa pesawat luar angkasa/roket meluncur dengan posisi vertikal, kenapa tidak horizontal atau mendatar seperti pesawat Garuda saja?' Apa jawaban mu?",
+                imageUrl:
+                    "https://danielgood.info/wp-content/uploads/2022/01/first-principles-thinking-1280x7686554298111112916745-1-768x461.jpg",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question:
+                    "Apa tugas yang harus saya kerjakan dalam minggu ini?",
+                answer:
+                    "Tugas untuk minggu ini meliputi mengerjakan latihan soal bahasa Inggris halaman 50-60, menulis esai tentang conditional sentence, dan mengumpulkan laporan proyek kelompok. kemudian anda akan melakukan diskusi kelompok untuk mendiskusikan tentang How to be a great student in the 21st century. Informasi lanjutan anda bisa menghubungi guru yang bersangkutan",
+                imageUrl:
+                    "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question:
+                    "Dalam konteks hukum Pareto, bagaimana saya bisa mengidentifikasi materi yang memberikan dampak terbesar pada pemahaman saya terhadap suatu mata pelajaran?",
+                answer:
+                    "Pernahkah Anda merenung tentang bagaimana berlian langka ditemukan di tengah hutan yang lebat?💎 Seperti halnya dalam perjalanan belajar, kita dapat mengambil inspirasi dari Hukum Pareto, sebuah prinsip yang mengajarkan bahwa fokus pada elemen kunci dapat menghasilkan dampak yang lebih besar. Jika kita melihat kurva pembelajaran sebagai ladang yang harus kita tanami, maka prinsip ini memandu kita untuk mengalokasikan waktu dan usaha kita pada 20% materi yang akan memberikan 80% pemahaman. Pertama-tama, cermati silabus atau struktur pelajaran yang telah diberikan. Identifikasi konsep-konsep kunci dan elemen-elemen fondasional yang membentuk dasar mata pelajaran tersebut. Ini bisa menjadi titik awal yang kuat, mirip dengan fondasi kokoh yang mendukung bangunan megah. Lalu, coba terapkan prinsip 80/20 ini dengan melihat jenis pertanyaan atau tugas yang paling sering muncul dalam ujian atau tugas. Apa saja bagian-bagian yang menjadi fokus utama pengajaran atau pembahasan? Jika Anda mendapati bahwa beberapa topik atau konsep muncul secara konsisten dan memiliki implikasi yang lebih luas dalam pemahaman, maka itulah yang sebaiknya Anda telusuri lebih dalam. Contohnya, jika Anda sedang mempelajari Matematika, Anda mungkin menemukan bahwa beberapa konsep kunci, seperti persamaan linear atau integral, memiliki penerapan yang lebih luas dan mendasar bagi pemahaman Anda terhadap berbagai topik dalam mata pelajaran tersebut. Seiring Anda memahami konsep-konsep inti ini dengan mendalam, Anda akan semakin siap untuk menaklukkan tantangan yang lebih kompleks. Analogi ini mirip dengan memahami alur cerita dasar dalam buku, sehingga Anda dapat dengan lebih mudah mengurai lapisan-lapisan yang lebih dalam dan kompleks di dalamnya. Dengan mengaplikasikan prinsip Hukum Pareto, Anda akan mempercepat kurva belajar Anda dan mencapai pencerahan yang lebih cepat dalam pemahaman materi pelajaran.📚🌟",
+                imageUrl:
+                    "https://www.jojonomic.com/wp-content/uploads/2020/09/7.-Pareto4-1024x576.jpg",
+                link: "",
+                videoLink: "",
+            },
+            // {
+            //     question: "Bagaimana cara mengakses jadwal pelajaran?",
+            //     answer:
+            //         "Anda dapat mengakses jadwal pelajaran melalui portal siswa di situs web sekolah atau menggunakan aplikasi mobile sekolah yang tersedia. Masuk dengan akun Anda untuk melihat jadwal pelajaran terbaru.",
+            //     imageUrl:
+            //         "https://tse3.mm.bing.net/th?id=OIP.gaE1DtjcvmSgWQJPNgvuRwHaFF&pid=Api&P=0&h=180",
+            //     link: "",
+            //     videoLink: "https://www.youtube.com/watch?v=Jco91XAfIsg",
+            //     // mulai dari sini
+            // },
+            {
+                question: "Bagaimana kita bisa mengembangkan pola pikir dan strategi berpikir yang mendekati tingkat kecerdasan dan kreativitas seorang jenius?",
+                answer:
+                    "Wahhh....pertanyaan mu sangat bagus! Oke, sekarang bayangkan dirimu sedang memasuki laboratorium pikiran yang menantang, di mana setiap eksperimen membawa kita lebih dekat pada pemahaman mendalam dan inovasi yang luar biasa. Misalkan, pernahkah kamu melihat seorang seniman melukis sebuah lukisan? Mereka memulai dengan sekumpulan warna di palet, dan secara bertahap mereka menggabungkan dan mencampur warna tersebut untuk menciptakan karya seni yang mengagumkan. Demikian pula, dalam berpikir seperti jenius, kita dapat memulai dengan mengumpulkan berbagai informasi, ide, dan konsep. Lalu, kita menggabungkannya dengan cara yang tak terduga untuk menciptakan solusi yang kreatif dan inovatif. Contoh lainnya bisa kita lihat dari penemu terkenal, seperti Thomas Edison. Edison memiliki pandangan bahwa kegagalan hanyalah langkah menuju kesuksesan. Ketika dia mencoba untuk menciptakan bola lampu, dia mengalami ratusan kegagalan. Tetapi dia tidak menyerah. Setiap kegagalan memberinya informasi berharga tentang apa yang tidak berhasil. Analogi ini mengajarkan kita untuk melihat setiap tantangan sebagai peluang untuk belajar dan tumbuh. Selanjutnya, mari kita lihat bagaimana jenius komputer Steve Jobs membentuk Apple. Dia tidak hanya berfokus pada produk, tetapi juga pada pengalaman pengguna. Pemikirannya adalah bahwa teknologi seharusnya tidak hanya berfungsi, tetapi juga memiliki estetika yang menarik. Demikian pula, dalam berpikir seperti jenius, kita bisa melihat situasi dari perspektif yang lebih luas. Bagaimana kita bisa memberikan nilai tambah yang unik? Bagaimana cara kita bisa membuat sesuatu lebih baik atau lebih menarik? Ketika kita mengembangkan pola pikir dan strategi berpikir yang mendekati tingkat kecerdasan dan kreativitas seorang jenius, kita sebenarnya sedang membuka pintu untuk melihat dunia dengan mata yang lebih tajam dan wawasan yang lebih mendalam. Seperti memecahkan teka-teki yang semakin terungkap, setiap langkah membawa kita lebih dekat pada potensi kita yang sebenarnya. Jadi, mari kita hadapi setiap hari sebagai peluang untuk berpikir lebih dalam, berinovasi, dan mendekati kecerdasan yang lebih tinggi. INGAT! Kecerdasan adalah kemampuan untuk menyesuaikan diri/beradapatasi dengan perubahan. Dia yang tidak bisa menyesuaikan diri dengan perubahan akan tertinggal jauh.🧠🚀",
+                imageUrl: "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Bagaimana cara mengatasi rasa gugup saat harus berbicara atau berpresentasi dalam bahasa Inggris di depan kelas atau publik? Mengapa penting untuk mengembangkan kemampuan berbicara di depan umum dalam bahasa Inggris?",
+                answer: "Hi apa kabar, penantian di belakang panggung seolah seperti menunggu kedatangan badai, bukan? Gugup saat berbicara di depan umum adalah tantangan yang nyata, tetapi mari kita gambarkan ini sebagai petualangan emosionil yang penuh potensi. Coba bayangkan kamu adalah seorang penjelajah yang akan membagikan penemuan menarikmu pada dunia. Lantas, bagaimana kita bisa meredakan gugup ini? Pertama, persiapan adalah kunci utama. Persiapkan materi dengan baik, tapi jangan lupa untuk merencanakan juga bagaimana kamu akan menghadapi gugupmu. Buatlah skrip atau garis besar yang bisa menjadi panduanmu, seperti memiliki peta saat menjelajahi medan yang belum pernah dikelilingi sebelumnya. Kemudian, coba kenali audiensmu. Apa yang menarik bagi mereka? Saat kamu merasa terhubung dengan audiens, rasa gugupmu akan berkurang. Mengapa penting untuk mengembangkan kemampuan berbicara di depan umum dalam bahasa Inggris? Keterampilan ini bukan hanya tentang berbicara, tetapi juga tentang mempengaruhi, menginspirasi, dan membagikan ide dengan orang lain. Saat kamu bisa berbicara dengan percaya diri di depan umum, kamu membuka pintu untuk peluang baru. Kamu bisa memimpin presentasi yang menarik, berpartisipasi dalam diskusi yang mendalam, atau bahkan mengambil peran kepemimpinan di berbagai bidang. Jadi, jangan biarkan gugup menghentikanmu. Lihatlah ini sebagai kesempatan untuk tumbuh dan melampaui batasan diri. Setiap kali kamu berbicara di depan umum, kamu sedang melangkah lebih dekat ke arah potensi dirimu yang sebenarnya. Jadikan setiap panggung sebagai peluang untuk menemukan kekuatan baru dalam dirimu.🌟🎤",
+                imageUrl: "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Mengapa penting untuk meningkatkan kosa kata bahasa Inggris? Bagaimana cara efektif untuk melakukannya selain sekadar menghafal kata-kata?",
+                answer:
+                    "Tahukah kamu, setiap kata dalam bahasa Inggris adalah seperti kunci ajaib yang membuka pintu kepada wawasan baru dan peluang tak terbatas? 🗝️🌟 Bayangkan, dengan hanya beberapa kata, kamu bisa membangun duniamu sendiri di mana kamu bisa berbicara, berbagi ide, dan mengungkapkan emosi dengan lebih kuat dan jelas, wuihhh....keren bukan?. Tapi mari kita beralih dari cara tradisional, di mana menghafal adalah segalanya. Lebih dari itu, itu tentang menyelami makna di balik kata dan memahaminya dalam konteks yang lebih luas. Apakah kamu pernah membayangkan kosa kata seperti peta harta karun rahasia yang berisi permata berkilau? 💎 Nah, mari kita jelajahi cara-cara praktis untuk menemukan permata-permata ini. Pertama, coba luangkan waktu untuk membaca. Membaca buku, artikel, atau cerita pendek dalam bahasa Inggris akan membawamu pada kata-kata baru yang menarik. Jangan khawatir jika tidak memahami semua kata, karena pemahaman datang secara perlahan. Selanjutnya, coba terapkan bahasa Inggris dalam rutinitas sehari-harimu. Mulailah dengan hal-hal kecil, seperti membuat catatan atau daftar belanja dalam bahasa Inggris. Ini adalah seperti menyiram tanaman kecil yang tumbuh menjadi pohon besar dari kosa katamu. Jadi, ingatlah bahwa kosa kata adalah kunci yang membuka peluang baru. Dengan menggali lebih dalam dan memberi mereka ruang untuk tumbuh, kamu akan mengalami perkembangan yang menakjubkan dalam berbicara, menulis, dan berkomunikasi dalam bahasa Inggris.🌱🚀",
+                imageUrl: "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Mengapa tata bahasa (grammar) bahasa Inggris terkadang terasa rumit? Bagaimana caranya supaya kita bisa memahami dan menguasai tata bahasa dengan lebih baik?",
+                answer:
+                    "Hi, pertanyaanmu memang mengenai hal yang sering kali membuat siswa merasa tertantang dalam belajar bahasa Inggris, yaitu tata bahasa (grammar, betul ya? Coba bayangkan tata bahasa sebagai pondasi yang kokoh dalam bangunan bahasa Inggris. Tetapi, seperti memahami desain dan struktur bangunan, tata bahasa juga membutuhkan penerapan yang tepat agar semua komponen terjalin dengan baik. Sebenarnya, sulitnya tata bahasa bahasa Inggris terkadang karena aturan-aturannya yang kompleks dan pengecualian-pengecualiannya. Namun, jangan biarkan hal ini membuatmu putus asa! Salah satu cara terbaik untuk memahami tata bahasa adalah dengan memahami 'mengapa'di balik aturan tersebut. Misalnya, mengapa kita menggunakan tense tertentu dalam situasi tertentu. Ini seperti menggali cerita di balik setiap aturan, yang membuatnya lebih mudah diingat. Lalu, ada metode latihan yang efektif, seperti menerapkan tata bahasa dalam kalimat-kalimat yang sederhana terlebih dahulu. Mirip dengan membangun dasar sebelum membangun struktur yang lebih kompleks. Ketika kamu merasa lebih percaya diri dengan dasar-dasar, kamu bisa menantang diri sendiri dengan mengaplikasikan tata bahasa dalam kalimat yang lebih kompleks. Jangan ragu untuk meminta bantuan, baik dari guru maupun teman belajar. Belajar tata bahasa bersama-sama bisa jadi lebih menyenangkan dan bermanfaat. Ingatlah selalu bahwa, belajar tata bahasa bukan tentang 'sempurna' atau 'tidak sempurna,' melainkan tentang berkembang. Setiap kali kamu menggunakan tata bahasa, kamu sedang melangkah menuju pemahaman yang lebih baik. Jadi, jangan takut untuk menjelajahi tata bahasa, pahami dasarnya, dan bersenang-senanglah dalam perjalanan menguasainya.🏗️📚",
+                imageUrl: "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Bagaimana strategi terbaik untuk meningkatkan kemampuan berbicara dalam bahasa Inggris, terutama dalam hal meningkatkan kepercayaan diri/self-confidence?",
+                answer:
+                    "Ah, pertanyaan ini benar-benar menyingkap tantangan yang seringkali kita hadapi dalam perjalanan belajar bahasa Inggris termasuk saya sendiri dulu, yaitu kepercayaan diri dalam berbicara (demam panggung). Saya merasa diriku ini terkena strum arus listik yang membuat tubuh bergetar dan keringat dingin pula.Tapiiiii.... bayangkan ini sebagai panggung di mana kamu adalah pemeran utama dalam drama bahasa Inggris. Untuk menjadi pemeran utama yang percaya diri, pertama-tama, kamu perlu meyakini bahwa bahasa Inggris adalah sahabatmu, bukan lawan. Ini seperti berjalan dengan langkah pasti menuju panggung, tahu bahwa kamu tahu apa yang kamu bicarakan. Berdasarkan pengalaman para ahli, salah satu cara terbaik untuk meningkatkan kemampuan berbicara adalah dengan praktek yang konsisten. Jangan takut membuat kesalahan, karena kesalahan adalah bagian alami dari proses belajar. Temukan teman belajar atau kelompok yang mendukung, tempat di mana kamu bisa berbicara dan berdiskusi tanpa rasa takut. Seperti latihan olahraga, semakin kamu melatih dirimu berbicara dalam bahasa Inggris, semakin kuat dan percaya dirimu akan menjadi. REMEMBER, kepercayaan diri datang dari tindakan nyata. Ketika kamu melihat dirimu berbicara dalam bahasa Inggris dan berhasil mengkomunikasikan ide dan pikiran, itu adalah momen yang menginspirasi. Seperti latihan panggung yang terus dilakukan, kamu akan merasa semakin nyaman dan percaya diri dalam peranmu sebagai 'pemeran utama' dalam bahasa Inggris. Jadi, jangan ragu untuk berbicara, berlatihlah tanpa henti, dan lihatlah bagaimana kepercayaan dirimu akan tumbuh dan melejit.🎭🗣️",
+                imageUrl: "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Mengapa penting untuk bisa memahami bacaan bahasa Inggris yang kompleks? Bagaimana cara mengatasi kesulitan dalam memahami artikel ilmiah atau karya sastra dalam bahasa Inggris?",
+                answer: "Pertanyaan ini mengenai tantangan menarik dalam pembelajaran bahasa Inggris, yaitu memahami bacaan yang kompleks. Ah, masa sih? Okelah, bayangkan bacaan seperti jendela ke dunia pengetahuan dan imajinasi yang tak terbatas. Memahami bacaan bahasa Inggris yang kompleks membuka pintu pada gagasan dan pandangan yang lebih dalam, tetapi seperti menjelajah ke hutan yang belum pernah kamu eksplorasi sebelumnya. Menghadapi bacaan yang lebih rumit, cobalah untuk tidak merasa terlalu terintimidasi. Salah satu cara terbaik adalah dengan memulai dari bacaan yang lebih ringan dan perlahan-lahan meningkatkan tingkat kesulitan. Ini mirip dengan melatih tubuhmu agar lebih kuat dan tangguh. Selain itu, selalu bawa teman seperjalanan, yaitu kamus bahasa Inggris-Indonesia. Kamus adalah sahabatmu yang akan membantumu menerjemahkan kata-kata yang belum kamu kenal. Ketika menghadapi artikel ilmiah atau karya sastra yang lebih rumit, jangan takut untuk membaca dengan cermat dan berulang-ulang. Ini seperti memecahkan teka-teki yang semakin terungkap setiap kali kamu membaca. Cobalah juga berdiskusi dengan teman atau guru mengenai bacaan tersebut. Pandangan dari orang lain bisa membuka pemahaman baru yang mungkin tidak kamu pikirkan sebelumnya. Selalu ingat bahwa, memahami bacaan yang kompleks adalah tentang perjalanan, bukan tujuan akhir. Dengan mengatasi kesulitan dan secara bertahap mengasah kemampuan membaca bahasa Inggrismu, kamu akan merasa lebih percaya diri dalam menghadapi berbagai jenis bacaan. Jadi, jangan ragu untuk menantang dirimu sendiri dengan bacaan yang lebih dalam, dan nikmati prosesnya seperti petualangan yang penuh penemuan baru. 📖🌍",
+                imageUrl: "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Kapan jadwal ujian akhir semester akan diumumkan?",
+                answer:
+                    "Jadwal ujian akhir semester akan diumumkan secara resmi dalam beberapa minggu menjelang akhir semester. Pastikan Anda memantau pengumuman resmi dari sekolah yah.",
+                imageUrl: "",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Bagaimana saya bisa memanfaatkan prinsip neurosains untuk meningkatkan kemampuan otak dalam mengingat dan memproses informasi?",
+                answer: "Bayangkan kamu sedang berjalan-jalan di hutan yang tebal, dan tiba-tiba menemukan koin emas yang bersinar di antara daun-daun. 💰 Meskipun terasa sulit dicari di tengah kerumitan hutan, prinsip neurosains sebenarnya seperti peta yang membantu kamu menemukan potensi otakmu. Bagaimana cara kamu memanfaatkan prinsip ini untuk membuat otakmu lebih baik dalam mengingat dan memproses informasi? Pertama-tama, mari kita lihat otakmu sebagai kotak ajaib yang penuh dengan koin emas. Prinsip neuroplastisitas ini adalah cara otakmu beradaptasi dan berubah seiring waktu. Ini mirip dengan kamu membuka jalan di hutan untuk menemukan koin-koin tersebut. Misalnya, saat kamu sedang belajar matematika, cobalah untuk mengaitkan konsep-konsep baru dengan hal-hal yang sudah kamu tahu sebelumnya. Ini seperti menyimpan koin-koin berharga dalam kotak dengan rapi. Selanjutnya, sama seperti kamu merawat koin emas agar tetap berkilau, otakmu juga perlu 'perawatan' istimewa. Prinsip ini mengatakan bahwa kamu perlu memberi otakmu nutrisi yang tepat, seperti memberi makan koin-koin emasmu. Misalnya, konsumsi makanan yang kaya akan nutrisi seperti sayuran, buah-buahan, dan ikan dapat membantu otakmu tetap tajam. Selain itu, kamu juga perlu 'melatih' otakmu layaknya berolahraga agar tetap kuat. Cobalah melakukan teka-teki atau permainan otak secara rutin, seperti memberikan kilau baru pada koin-koin emasmu. Jadi, bayangkan petualangan seru menggali koin emas yang tersembunyi, memahami prinsip neurosains memberikan kamu alat untuk mengoptimalkan otakmu agar lebih baik dalam mengingat dan memproses informasi dalam kehidupan sehari-hari. Dengan menerapkan prinsip ini, kamu akan dapat menghadapi tantangan belajar dengan lebih percaya diri dan cerdas.🌟🧠",
+                imageUrl: "https://ilmu.lpkn.id/wp-content/uploads/2021/03/images-2021-02-28T154926.388-1-scaled.jpeg",
+                link: "",
+                videoLink: "",
+            },
+            // {
+            //     question: "Siapakah Mr. Yanto?",
+            //     answer:
+            //         "Hai hai teman-teman sekalian! 🤗 Namaku Aurelius Santotinus Agung, tapi teman-teman biasanya memanggilku Yanto atau Mr. Yanto. Aku lahir pada tanggal 27 Juli 1997, jadi sekarang usiaku masih 26 tahun, belum tua-tua banget dong ya? Hahaha. 😜 Aku berasal dari Nusa Tenggara Timur, suku bangsaku adalah orang Flores Manggarai. Kalau ada yang dari sana juga, jangan malu-malu buat menyapa aku ya! Aku senang banget ngobrol dengan orang baru. 😃 Selain jadi guru bahasa Inggris, aku juga suka banget melakukan aktivitas-aktivitas kreatif. Hobi-hobiku adalah membaca 📚, membuat program (coding), menulis artikel📝, ngeblog 🌐, membuat website 🖥️, dan berdiskusi 🗣️. Aku percaya bahwa dengan mengekspresikan diri melalui tulisan dan diskusi, kita bisa terus berkembang dan belajar hal-hal baru. Oh iya, sebelum aku lupa. Aku juga ingin memperkenalkan sebuah sistem yang akan kita gunakan dalam proses pembelajaran nanti. Namanya adalah Learning Management System atau LMS. Jadi, dengan sistem ini, kita bisa membuat bahan ajar, media pembelajaran, dan lain-lain dengan lebih mudah dan interaktif. Aku yakin dengan LMS, proses belajar-mengajar kita akan jauh lebih menyenangkan dan efektif. 💻👨‍🏫👩‍💻 Baiklah, itu dia sedikit tentang diriku. Aku sangat antusias untuk bertemu dan berinteraksi dengan kalian semua. Mari kita bersama-sama mencapai tujuan belajar bahasa Inggris kita. Mungkin ingin lihat tampangnya bisa lihat dibawah ini. Terima kasih banyak!🙏",
+            //     imageUrl:
+            //         "",
+            //     link: "",
+            //     videoLink: "",
+            // },
+            // {
+            //     question:
+            //         "Dimana saya bisa melihat nilai Tugas, UTS, UAS dan informasi lainya?",
+            //     answer: "Anda bisa mengunjungi link URL berikut ini: 👇",
+            //     imageUrl:
+            //         "https://agilevelocity.com/wp-content/uploads/2020/02/Screen-Shot-2017-09-19-at-5.34.23-PM.jpg",
+            //     link: "",
+            //     videoLink: "https://www.youtube.com/watch?v=mCe5d5uNlJM",
+            // },
+            {
+                question: "Apa yang dimaksudkan dengan computer science?",
+                answer:
+                    "Ilmu komputer (computer science) adalah cabang ilmu yang berfokus pada pemahaman tentang komputasi dan segala aspek yang terkait dengan pengembangan serta penerapan teknologi komputer. Disiplin ini melibatkan studi mendalam tentang algoritma, yang merupakan panduan langkah demi langkah untuk menyelesaikan masalah komputasi, serta struktur data yang digunakan untuk mengatur dan mengelola informasi. Selain itu, ilmu komputer juga mencakup penelitian tentang teori komputasi, yang mencakup konsep-konsep teoritis tentang apa yang bisa dan tidak bisa dicapai oleh mesin komputasi. Aspek penting lainnya adalah pemrograman, di mana ilmu komputer berurusan dengan bahasa pemrograman, paradigma pemrograman, serta teknik pengembangan perangkat lunak yang efisien dan handal. Ilmu komputer memiliki dampak luas dalam berbagai bidang, termasuk teknologi, bisnis, ilmu pengetahuan, kesehatan, hiburan, dan banyak lagi. Kita dapat melihat aplikasinya dalam pengembangan perangkat lunak untuk memfasilitasi tugas sehari-hari, dalam analisis data untuk mengambil keputusan yang informasional, dalam jaringan komputer yang menghubungkan dunia digital, dan dalam kecerdasan buatan yang berusaha untuk meniru kemampuan manusia dalam memecahkan masalah dan belajar dari pengalaman. Dengan berkembangnya teknologi, ilmu komputer terus berinovasi dan mencari solusi baru untuk tantangan yang muncul, seperti keamanan siber untuk melindungi data sensitif, serta komputasi terdistribusi untuk mengelola sumber daya secara efisien. Dengan demikian, ilmu komputer tidak hanya memberikan wawasan tentang cara komputer bekerja, tetapi juga memberikan kerangka kerja konseptual untuk memahami dunia yang semakin didominasi oleh teknologi. Para ilmuwan komputer dan profesional di bidang ini berperan dalam mendorong batasan inovasi teknologi, menciptakan solusi yang bermanfaat bagi masyarakat, dan menjembatani kesenjangan antara konsep teoritis dan aplikasi praktis dalam dunia komputasi yang terus berkembang.",
+                imageUrl:
+                    "https://tse2.mm.bing.net/th?id=OIP.q6XWSkP25aKfC4AzTSa_uwHaFj&pid=Api&P=0&h=180",
+                link: "",
+                videoLink: "",
+            },
+            {
+                question: "Apakah yang dimaksudkan dengan global warming? ",
+                answer:
+                    "Pemanasan global, atau global warming, merujuk pada peningkatan suhu rata-rata permukaan bumi dalam skala global. Fenomena ini disebabkan oleh peningkatan konsentrasi gas-gas rumah kaca di atmosfer, seperti karbon dioksida (CO2), metana (CH4), dan nitrogen oksida (NOx), yang dihasilkan dari aktivitas manusia seperti pembakaran bahan bakar fosil, deforestasi, dan industri. Ketika gas-gas ini terperangkap di atmosfer, mereka menciptakan lapisan yang membiaskan kembali panas dari permukaan bumi, menghasilkan kenaikan suhu secara bertahap. Pemanasan global memiliki dampak luas terhadap lingkungan dan kehidupan di bumi. Efeknya termasuk pencairan es di kutub yang menyebabkan kenaikan permukaan laut, perubahan pola cuaca yang ekstrem seperti gelombang panas yang lebih sering terjadi, perubahan ekosistem yang dapat mempengaruhi keanekaragaman hayati, dan ancaman terhadap ketersediaan air bersih dan sumber daya alam lainnya. Upaya global telah dilakukan untuk mengurangi emisi gas rumah kaca dan memitigasi dampak pemanasan global melalui berbagai tindakan seperti mengadopsi energi terbarukan, meningkatkan efisiensi energi, dan mendorong praktik berkelanjutan dalam industri dan masyarakat secara keseluruhan.",
+                imageUrl:
+                    "https://img.freepik.com/free-photo/html-system-websites-concept_23-2150323548.jpg?w=826&t=st=1708656542~exp=1708657142~hmac=31072b46843be3f9ef88568be3c4f61c8757f9aa26ab3727a0ed0b72090530f3",
+                link: "",
+                videoLink: "",
+            },
+            // Tambahkan data pertanyaan dan jawaban lainnya
+        ];
+        //videoLink: "https://www.youtube.com/watch?v=your_video_id_here"
+        //ini pakai ID video YouTube:
+        //videoLink: "https://www.youtube.com/watch?v=1KG1EF50VtE"
+        //link embeded videoLink: "https://www.youtube.com/embed/your_video_id_here"
+        // Data ikon pengguna
+
+        const userIconData = [
+            {
+                name: "Juni",
+                icon: "https://cdn-icons-png.freepik.com/256/2702/2702268.png?ga=GA1.2.935816055.1717857094&semt=ais_hybrid",
+            },
+            {
+                name: "Yanto",
+                icon: "https://drive.google.com/thumbnail?id=1JaSeFSQjkAZHDEaiUjfhCIdLx3jhnG8R",
+            },
+            {
+                name: "Ida",
+                icon: "https://cdn-icons-png.freepik.com/256/12858/12858235.png?ga=GA1.2.935816055.1717857094&semt=ais_hybrid",
+            },
+            {
+                name: "Elisabet",
+                icon: "https://cdn-icons-png.freepik.com/256/6032/6032310.png?ga=GA1.2.935816055.1717857094&semt=ais_hybrid",
+            },
+            {
+                name: "Ina",
+                icon: "https://cdn-icons-png.freepik.com/256/169/169924.png?ga=GA1.2.935816055.1717857094&semt=ais_hybrid",
+            },
+            {
+                name: "Adi",
+                icon: "https://cdn-icons-png.freepik.com/256/4202/4202854.png?ga=GA1.2.935816055.1717857094&semt=ais_hybrid",
+            },
+            {
+                name: "Imanuel",
+                icon: "https://cdn-icons-png.freepik.com/256/4202/4202854.png?ga=GA1.2.935816055.1717857094&semt=ais_hybrid",
+            },
+            {
+                name: "Dhio",
+                icon: "https://cdn-icons-png.flaticon.com/128/3429/3429417.png",
+            },
+            {
+                name: "Ello",
+                icon: "https://cdn-icons-png.flaticon.com/128/4727/4727424.png",
+            },
+            {
+                name: "Rafela",
+                icon: "https://cdn-icons-png.flaticon.com/128/3429/3429402.png",
+            },
+            {
+                name: "Zena",
+                icon: "https://cdn-icons-png.flaticon.com/128/2922/2922561.png",
+            },
+            {
+                name: "Stenly",
+                icon: "https://cdn-icons-png.flaticon.com/128/924/924915.png",
+            },
+            {
+                name: "Alfons",
+                icon: "",
+            },
+            {
+                name: "Santos",
+                icon: "",
+            },
+            {
+                name: "Nicolas",
+                icon: "",
+            },
+            {
+                name: "Jhose",
+                icon: "",
+            },
+        ];
+
+        const welcomeBotIcon = "https://cdn-icons-png.freepik.com/256/6819/6819738.png?ga=GA1.1.1467642370.1706578230&";
+        const chatArea = document.querySelector(".chat-area");
+        const userNameInput = document.getElementById("userNameInput");
+        const questionSelect = document.getElementById("questionSelect");
+        const sendButton = document.getElementById("sendButton");
+        const clearButton = document.getElementById("clearButton");
+        let questionCount = 0;
+
+        async function typingEffect(message, targetElement, delay = 12) {
+            for (let i = 0; i < message.length; i++) {
+                targetElement.textContent += message.charAt(i);
+                await new Promise((resolve) => setTimeout(resolve, delay));
+            }
+        }
+
+        async function displayWelcomeMessage() {
+            const botMessageElement = document.createElement("div");
+            botMessageElement.className = "bot-message";
+
+            const iconImage = document.createElement("img");
+            iconImage.src = welcomeBotIcon;
+            iconImage.alt = "Bot icon";
+            iconImage.className = "bot-icon";
+            botMessageElement.appendChild(iconImage);
+
+            const messageBubble = document.createElement("div");
+            messageBubble.className = "message-bubble";
+            botMessageElement.appendChild(messageBubble);
+
+            chatArea.appendChild(botMessageElement);
+
+            await typingEffect(
+                "Hi, Sobat Belajar SMP Persiapan Negeri Pulau Tiga 🖐️ Perkenalkan, Nama Saya SmartChat-AI, Merupakan Mesin Pintar Kecerdasan Buatan Yang Akan Membantu Anda Dalam Menjawab Pertanyaan Umum Termasuk Seputar Materi  Yang Ada di SMP👇 Good Luck...!! 💪",
+                messageBubble
+            );
+        }
+
+        async function displayUserMessage(userName, message) {
+            const userMessageElement = document.createElement("div");
+            userMessageElement.className = "user-message";
+
+            const icon = getUserIcon(userName);
+
+            // Create a div to hold the icon and username
+            const userIconContainer = document.createElement("div");
+            userIconContainer.style.display = "flex";
+            userIconContainer.style.flexDirection = "column";
+            userIconContainer.style.alignItems = "center";
+            userIconContainer.style.marginRight = "10px"; // Add some margin to separate from the message bubble
+
+            // Append the icon image to the container
+            const iconImage = document.createElement("img");
+            iconImage.src = icon ? icon.icon : getDefaultIcon(userName);
+            iconImage.alt = "User icon";
+            iconImage.className = "user-icon";
+            userIconContainer.appendChild(iconImage);
+
+            // Add the username below the icon
+            const userNameLabel = document.createElement("div");
+            userNameLabel.textContent = userName;
+            userNameLabel.style.fontSize = "12px";
+            userNameLabel.style.color = "#ffffffe2";
+            userNameLabel.style.marginTop = "5px";
+            userIconContainer.appendChild(userNameLabel);
+
+            // Append the user icon container to the user message element
+            userMessageElement.appendChild(userIconContainer);
+
+            const messageBubble = document.createElement("div");
+            messageBubble.className = "message-bubble";
+            userMessageElement.appendChild(messageBubble);
+
+            chatArea.appendChild(userMessageElement);
+
+            await typingEffect(message, messageBubble);
+        }
+
+        function getUserIcon(userName) {
+            const user = userIconData.find(user => user.name.toLowerCase() === userName.toLowerCase());
+            return user ? user : null;
+        }
+
+        function getDefaultIcon(userName) {
+            const isMale = isMaleUser(userName);
+            return isMale ? "https://cdn-icons-png.flaticon.com/128/4727/4727424.png" : "https://cdn-icons-png.flaticon.com/128/921/921009.png";
+        }
+
+        function isMaleUser(userName) {
+            const lowerCaseName = userName.toLowerCase();
+
+            // Membuat pola regex untuk mendeteksi kata-kata yang mungkin menandakan jenis kelamin pria
+            const malePatterns = /(Yanto|mr\.|sir)/;
+
+            // Membuat pola regex untuk mendeteksi kata-kata yang mungkin menandakan jenis kelamin wanita
+            const femalePatterns = /(ms\.|mrs\.|miss|lady)/;
+
+            // Memeriksa apakah terdapat pola yang sesuai dengan jenis kelamin pria atau wanita
+            const isMaleMatch = malePatterns.test(lowerCaseName);
+            const isFemaleMatch = femalePatterns.test(lowerCaseName);
+
+            // Mengembalikan hasil berdasarkan hasil pola
+            return isMaleMatch && !isFemaleMatch;
+        }
+
+        async function displayBotMessage(message, imageUrls, link, videoLink, userName) {
+            const botMessageElement = document.createElement("div");
+            botMessageElement.className = "bot-message";
+
+            const iconImage = document.createElement("img");
+            iconImage.src = welcomeBotIcon;
+            iconImage.alt = "Bot icon";
+            iconImage.className = "bot-icon";
+            botMessageElement.appendChild(iconImage);
+
+            const messageBubble = document.createElement("div");
+            messageBubble.className = "message-bubble";
+            botMessageElement.appendChild(messageBubble);
+
+            chatArea.appendChild(botMessageElement);
+
+            // Scroll down to the bottom smoothly after the bot responds
+            const scrollOptions = {
+                top: chatArea.scrollHeight,
+                behavior: 'smooth'
+            };
+            chatArea.scrollTo(scrollOptions);
+
+            const thinkingMessage = document.createElement("div");
+            thinkingMessage.textContent = "Mohon bersabar ya. Saya sedang berpikir...";
+            thinkingMessage.style.fontStyle = "italic";
+            messageBubble.appendChild(thinkingMessage);
+
+            // Add a delay before displaying the actual bot response
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
+            // Clear the "Bot is thinking..." message
+            messageBubble.removeChild(thinkingMessage);
+
+            const userGreeting = userName
+                ? `Terima kasih @${userName} atas pertanyaannya. SmartChat-AI segera menjawab pertanyaan Anda 👍`
+                : " ";
+
+            // Split the message into sentences
+            const sentences = message.split(/(?<=\.)/); // Split by end of sentence
+            const paragraphs = [];
+            let currentParagraph = [];
+
+            sentences.forEach((sentence, index) => {
+                currentParagraph.push(sentence.trim());
+                if (currentParagraph.length === 5 || index === sentences.length - 1) {
+                    paragraphs.push(currentParagraph.join(' '));
+                    currentParagraph = [];
+                }
+            });
+
+            await typingEffect(userGreeting, messageBubble);
+
+            for (const paragraph of paragraphs) {
+                if (paragraph.trim()) {  // Check if the paragraph is not empty
+                    const paragraphElement = document.createElement("p"); // Create a new paragraph element
+                    paragraphElement.style.marginBottom = "0.4cm"; // Set the bottom margin to 1.5cm
+                    paragraphElement.style.marginTop = "0"; // Ensure there is no top margin
+                    messageBubble.appendChild(paragraphElement); // Append the paragraph element to the messageBubble
+                    await typingEffect(paragraph.trim(), paragraphElement); // Add text to the paragraph element
+                }
+            }
+
+            if (messageBubble.innerHTML !== "") {
+                messageBubble.innerHTML += "<br><br>";
+            }
+
+            // Display images if available
+            for (const imageUrl of imageUrls) {
+                const imageElement = document.createElement("img");
+                imageElement.src = imageUrl;
+                imageElement.alt = "Bot Image";
+                imageElement.className = "bot-image"; // Adding bot-image class
+                messageBubble.appendChild(imageElement);
+                messageBubble.innerHTML += "<br><br>👇";
+            }
+
+            // Display video if available
+            if (videoLink) {
+                const videoContainer = document.createElement("div");
+                videoContainer.className = "bot-video"; // Adding bot-video class
+                videoContainer.style.position = "relative";
+                videoContainer.style.paddingBottom = "56.25%"; // Adjust the video aspect ratio as needed
+
+                const videoIframe = document.createElement("iframe");
+                videoIframe.src = videoLink.replace("watch?v=", "embed/");
+                videoIframe.width = "100%";
+                videoIframe.height = "100%";
+                videoIframe.style.position = "absolute";
+                videoIframe.style.top = "0";
+                videoIframe.style.left = "0";
+                videoIframe.style.width = "100%";
+                videoIframe.style.height = "100%";
+                videoIframe.frameborder = "0";
+                videoIframe.allowfullscreen = true;
+
+                videoContainer.appendChild(videoIframe);
+                messageBubble.appendChild(videoContainer);
+                messageBubble.innerHTML += "<br><br>👇";
+            }
+
+            // Display link if available
+            if (link) {
+                const linkElement = document.createElement("a");
+                linkElement.href = link;
+                linkElement.target = "_blank";
+                linkElement.textContent = "Silahkan dibuka websitenya di sini, ya 😊";
+                linkElement.style.wordBreak = "break-all";
+                linkElement.style.color = "#ffffffe2";
+                linkElement.style.textDecoration = "none";
+                messageBubble.appendChild(linkElement);
+            }
+        }
+
+        function populateQuestionSelect() {
+            chatData.forEach((item) => {
+                const option = document.createElement("option");
+                option.value = item.question;
+                option.textContent = item.question;
+                option.setAttribute("data-answer", item.answer);
+                option.setAttribute("data-imageUrl", item.imageUrl);
+                option.setAttribute("data-link", item.link);
+                option.setAttribute("data-videoLink", item.videoLink);
+                questionSelect.appendChild(option);
+            });
+        }
+
+        questionSelect.addEventListener("change", () => {
+            const selectedOption =
+                questionSelect.options[questionSelect.selectedIndex];
+            const selectedQuestion = selectedOption.value;
+
+            if (selectedQuestion !== "") {
+                sendButton.disabled = false;
+            } else {
+                sendButton.disabled = true;
+            }
+        });
+
+        let isBotResponding = false;
+
+        sendButton.addEventListener("click", async () => {
+            const userName = userNameInput.value.trim();
+            const selectedOption = questionSelect.options[questionSelect.selectedIndex];
+            const selectedQuestion = selectedOption.value;
+            const botAnswer = selectedOption.getAttribute("data-answer");
+            const imageUrls = selectedOption.getAttribute("data-imageUrl") ? selectedOption.getAttribute("data-imageUrl").split(",") : [];
+            const link = selectedOption.getAttribute("data-link");
+            const videoLink = selectedOption.getAttribute("data-videoLink");
+
+            const errorMessage = document.getElementById("errorMessage");
+
+            if (!userName) {
+                errorMessage.textContent = "Mohon masukkan nama Anda sebelum mengirim pertanyaan. 🙏";
+                setTimeout(() => {
+                    errorMessage.textContent = ""; // Clear the error message after 2000 milliseconds (2 seconds)
+                }, 3000);
+                return;
+            }
+
+            if (!selectedQuestion) {
+                errorMessage.textContent = "Mohon pilih pertanyaan sebelum mengirim. 🙏";
+                setTimeout(() => {
+                    errorMessage.textContent = ""; // Clear the error message after 2000 milliseconds (2 seconds)
+                }, 2000);
+                return;
+            }
+
+            // Clear the input fields immediately after getting the values
+            console.log("Clearing input fields..."); // Logging for debugging
+            userNameInput.value = "";
+            questionSelect.selectedIndex = 0;
+            console.log("Input fields cleared."); // Logging for debugging
+
+            if (userName !== "" && selectedQuestion !== "" && !isBotResponding) {
+                if (questionCount < 1000) {
+                    isBotResponding = true;
+                    await displayUserMessage(userName, selectedQuestion);
+                    await displayBotMessage(botAnswer, imageUrls, link, videoLink, userName);
+
+                    questionCount++;
+
+                    // Disable the button after reaching the limit
+                    if (questionCount === 2) {
+                        sendButton.disabled = true;
+                    }
+
+                    // Enable the button after the bot has finished responding
+                    setTimeout(() => {
+                        isBotResponding = false;
+                        sendButton.disabled = false;
+                    }, /* Set an appropriate timeout here, for example 3000 for 3 seconds */);
+
+                    // Clear any previous error messages
+                    errorMessage.textContent = "";
+                } else {
+                    errorMessage.textContent = "Maaf, Anda hanya diperbolehkan mengirimkan pertanyaan sebanyak 2 kali.🙏";
+                    setTimeout(() => {
+                        errorMessage.textContent = ""; // Clear the error message after 2000 milliseconds (2 seconds)
+                    }, 3000);
+                }
+            } else {
+                errorMessage.textContent = "Maaf, tunggu hingga bot selesai merespon sebelum mengirim pertanyaan lagi. Klik hapus kalau mau ganti pertanyaan. 🙏";
+                setTimeout(() => {
+                    errorMessage.textContent = ""; // Clear the error message after 2000 milliseconds (2 seconds)
+                }, 5000);
+            }
+        });
+
+        clearButton.addEventListener("click", () => {
+            chatArea.innerHTML = "";
+            sendButton.disabled = false; // Enable the button after clearing messages
+            questionCount = 0; // Reset question count
+            document.getElementById("errorMessage").textContent = ""; // Clear any previous error messages
+            isBotResponding = false; // Allow sending questions again after clearing
+        });
+
+        clearButton.addEventListener("click", () => {
+            chatArea.innerHTML = "";
+        });
+
+        displayWelcomeMessage();
+        populateQuestionSelect();
+
+    </script>
+</body>
+
+</html>
+<!-- //coded by Mr. Yanto, an English teacher at secondary 
+school of Persiapan Negeri Pulau Tiga. He is also a web developer, specifically in front-end
+like HTMl, CSS, and JavaScript. -->
